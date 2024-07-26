@@ -1,9 +1,11 @@
 from zhinst.toolkit import Session
 from zhinst.toolkit import Waveforms
 import numpy as np
+from scipy.fft import fft, ifft, fftfreq
 
 from afc_prep_offset import full_waveform
 from afc_prep_parallel import full_waveform_parallel
+
 
 
 if __name__ == '__main__':
@@ -14,6 +16,9 @@ if __name__ == '__main__':
 
     # waveform control
     SHIFTED = False
+
+    # Control plotting
+    DO_PLOTS = True
 
     # waveform params
     A = 0.5  # overall amplitude of pulse (after normalization)
@@ -53,3 +58,18 @@ if __name__ == '__main__':
 
     with device.set_transaction():
         device.awgs[0].write_to_waveform_memory(waveforms)
+
+    if DO_PLOTS:
+        y = wav
+        x = t
+        N = int(num_points)
+        T = resolution # I don't know if this is correct
+
+        yf = fft(y)
+        xf = fftfreq(N, T)[:N//2] * 1e-6
+
+        plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
+        plt.xlabel('Frequency (MHz)')
+        plt.xlim(0,200)
+        plt.grid()
+        plt.show()
