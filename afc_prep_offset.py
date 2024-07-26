@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
 def single_tooth(t,d,freq_offset,beta,f_0,w):
     #if np.abs(beta*(t-d)) < np.max:
     temp1 = (np.cos(2*np.pi*(f_0+freq_offset)*d)*np.cos(np.pi*w/beta*np.log(np.cosh(beta*(t-d)))) 
@@ -17,7 +16,8 @@ def single_tooth(t,d,freq_offset,beta,f_0,w):
     c2 = np.sin(2*np.pi*freq_offset*t)*temp1/np.cosh(beta*(t-d))+np.cos(2*np.pi*freq_offset*t)*temp2/np.cosh(beta*(t-d))
     return (c1,c2)
 
-def full_waveform(N,delta,num_points,resolution,beta,f_0,w):
+
+def full_waveform(N, delta, num_points, resolution, beta, f_0, w):
     tau = num_points*resolution
     teeth = []
     for i in range(N):
