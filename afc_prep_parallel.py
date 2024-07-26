@@ -1,8 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
-def full_waveform_parallel(N, delta, beta, delta_f, tau, resolution):
+def full_waveform_parallel(N, delta, beta, delta_f, num_points, resolution):
+    tau = num_points * resolution
     times = np.arange(-tau / 2, tau / 2, resolution)
 
     theta = np.pi * delta_f / beta * np.log(np.cosh(beta * times))

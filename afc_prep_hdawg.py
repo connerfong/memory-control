@@ -21,14 +21,13 @@ if __name__ == '__main__':
     delta = 1e6  # unit: Hz
     tau = 2e-3  # unit: s
     beta = 10 / tau
-    delta_f = 0.7e6
+    delta_f = 0.7e6  # unit: Hz
+    f_0 = 25e6  # unit: Hz
+    f_light = 195e12  # light frequency (in Hz)
 
     resolution = 1 / samp_rate  # unit: s
     num_points = tau / resolution
     num_points = (num_points // 16) * 16  # round to multiple of 16
-
-    f_0 = 25e6  # unit: Hz
-    f_light = 195e12  # light frequency (in Hz)
 
     if SHIFTED:
         t, theta, amp = (
@@ -36,7 +35,7 @@ if __name__ == '__main__':
         wav = A * amp * np.sin(2 * np.pi * f_0 * t + theta)
     else:
         t, theta, amp = (
-            full_waveform_parallel(N, delta, beta, delta_f, tau, resolution))
+            full_waveform_parallel(N, delta, beta, delta_f, num_points, resolution))
         wav = A * amp * np.cos(2 * np.pi * f_0 * t + theta)
     print(f"len: {len(wav)}")
 
