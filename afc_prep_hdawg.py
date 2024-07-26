@@ -2,15 +2,20 @@ from zhinst.toolkit import Session
 from zhinst.toolkit import Waveforms
 import numpy as np
 
-from afc_prep_py import full_waveform
+from afc_prep_offset import full_waveform
+from afc_prep_parallel import full_waveform_parallel
 
 
 if __name__ == '__main__':
+    # device params
     DEVICE_ID = 'DEV8345'
     SERVER_HOST = 'localhost'
-
     samp_rate = 2.4e9  # unit: Hz
 
+    # waveform control
+    SHIFTED = False
+
+    # waveform params
     A = 0.5  # overall amplitude of pulse (after normalization)
     N = 2
     delta = 1e6  # unit: Hz
@@ -20,14 +25,19 @@ if __name__ == '__main__':
 
     resolution = 1 / samp_rate  # unit: s
     num_points = tau / resolution
-    num_points = (num_points // 16) * 16
+    num_points = (num_points // 16) * 16  # round to multiple of 16
 
     f_0 = 25e6  # unit: Hz
     f_light = 195e12  # light frequency (in Hz)
 
-    t, theta, amp = (
-        full_waveform(N, delta, num_points, resolution, beta, f_light, delta_f))
-    wav = A * amp * np.sin(2*np.pi*f_0*t + theta)
+    if SHIFTED:
+        t, theta, amp = (
+            full_waveform(N, delta, num_points, resolution, beta, f_light, delta_f))
+        wav = A * amp * np.sin(2 * np.pi * f_0 * t + theta)
+    else:
+        t, theta, amp = (
+            full_waveform_parallel(N, delta, beta, delta_f, tau, resolution))
+        wav = A * amp * np.cos(2 * np.pi * f_0 * t + theta)
     print(f"len: {len(wav)}")
 
     # connect to device
